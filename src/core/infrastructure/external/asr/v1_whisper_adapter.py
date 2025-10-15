@@ -1,0 +1,1 @@
+# placeholder whisper adapter

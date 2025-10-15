@@ -1,0 +1,1 @@
+# placeholder salut speech adapter

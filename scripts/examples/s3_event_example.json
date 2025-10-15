@@ -1,0 +1,10 @@
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": { "name": "consilium" },
+        "object": { "key": "demo.pdf", "size": 12345, "eTag": "etag-demo" }
+      }
+    }
+  ]
+}

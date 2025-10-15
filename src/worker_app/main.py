@@ -9,6 +9,7 @@ from src.worker_app.workers import ocr_pdf_small  # noqa
 from src.worker_app.workers import ocr_pdf_large  # noqa
 from src.worker_app.workers import ocr_img_small  # noqa
 from src.worker_app.workers import merge_pdf_task  # noqa
+from src.worker_app.workers import vault_indexer  # noqa
 
 
 def main():

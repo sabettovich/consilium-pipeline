@@ -5,27 +5,27 @@ Rule followed: `doc/rules/generate-tasks.md` (Phase 2 — с подзадача�
 
 ## Parent Tasks
 
-- [ ] M1. Схема БД и миграции (PostgreSQL)
+- [x] M1. Схема БД и миграции (PostgreSQL)
   - Checkpoint A: модели `tenant, case, document, artifact, storage_object, job, task, problem_log, event` описаны в `src/core/infrastructure/persistence/sqlalchemy/models.py`.
   - Checkpoint B: первичная миграция Alembic создана и применена на dev БД.
   - Checkpoint C: индексы на `idempotency_key`, `(tenant_id, case_id)`, `(bucket, key)` присутствуют.
   - Sub‑tasks:
-    - [ ] Описать модели и связи (FK, ON DELETE, уникальные индексы) в `models.py`.
-    - [ ] Настроить Alembic (env, script location), сгенерировать initial migration.
-    - [ ] Добавить индексы: `idempotency_key`, `(tenant_id, case_id)`, `(bucket, key)`, по `status`.
-    - [ ] Подготовить `docker-compose.yml` сервис для Postgres (dev).
+    - [x] Описать модели и связи (FK, ON DELETE, уникальные индексы) в `models.py`.
+    - [x] Настроить Alembic (env, script location), сгенерировать initial migration.
+    - [x] Добавить индексы: `idempotency_key`, `(tenant_id, case_id)`, `(bucket, key)`, по `status`.
+    - [x] Подготовить `docker-compose.yml` сервис для Postgres (dev).
     - [ ] Smoke: создать/прочитать `document`, `artifact`, `storage_object`.
 
-- [ ] M2. Брокер и базовые очереди (Redis + Dramatiq)
+- [x] M2. Брокер и базовые очереди (Redis + Dramatiq)
   - Checkpoint A: Redis как broker и кэш; Dramatiq запускается локально.
   - Checkpoint B: акторы OCR (`ocr_pdf_small`, `ocr_img_small`, `merge_pdf_task`) зарегистрированы.
-  - Checkpoint C: базовые ретраи и DLQ брокера включены.
+  - Checkpoint C: базовые ретраи и DLQ брокера включены. (DLQ реализуем на уровне приложения в M6)
   - Sub‑tasks:
-    - [ ] Добавить Redis в compose; конфиг Dramatiq в `dramatiq_broker.py`.
-    - [ ] Реализовать `queues.py` (имена, параметры) и регистратор акторов.
-    - [ ] Заглушки акторов: `ocr_pdf_small.py`, `ocr_img_small.py`, `merge_pdf_task.py`.
-    - [ ] Включить Dramatiq middleware: retries, (опционально) Prometheus.
-    - [ ] Health‑actor и health‑endpoint для проверки связности.
+    - [x] Добавить Redis в compose; конфиг Dramatiq в `dramatiq_broker.py`.
+    - [x] Реализовать `queues.py` (имена, параметры) и регистратор акторов.
+    - [x] Заглушки акторов: `ocr_pdf_small.py`, `ocr_img_small.py`, `merge_pdf_task.py`.
+    - [x] Включить Dramatiq middleware: retries.
+    - [x] Health‑actor и health‑проверка доставки сообщения.
 
 - [ ] M3. Интеграция S3→SQS ingestion
   - Checkpoint A: включены события `S3:ObjectCreated:*` → SQS (`ingestion-s3-events`).

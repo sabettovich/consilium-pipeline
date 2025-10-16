@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .models import Document
+from .models import Document, ProblemLog
 
 
 class DocumentRepository:
@@ -72,4 +72,47 @@ class DocumentRepository:
         self.s.add(doc)
         self.s.flush()
         return doc
+
+
+class ProblemLogRepository:
+    def __init__(self, session: Session) -> None:
+        self.s = session
+
+    def list(self, limit: int = 50) -> list[ProblemLog]:
+        stmt = select(ProblemLog).order_by(ProblemLog.id.desc()).limit(limit)
+        return list(self.s.scalars(stmt).all())
+
+    def add(
+        self,
+        *,
+        tenant_id: str,
+        document_id: int | None,
+        task_type: str | None,
+        queue: str | None,
+        error_code: str | None,
+        message: str | None,
+        recommendation: str | None = None,
+    ) -> ProblemLog:
+        row = ProblemLog(
+            tenant_id=tenant_id,
+            document_id=document_id,
+            task_type=task_type,
+            queue=queue,
+            error_code=error_code,
+            message=message,
+            recommendation=recommendation,
+        )
+        self.s.add(row)
+        self.s.flush()
+        return row
+
+    def decide(self, pl_id: int, decision: str, decided_by: str) -> ProblemLog | None:
+        row = self.s.get(ProblemLog, pl_id)
+        if not row:
+            return None
+        row.user_decision = decision
+        row.decided_by = decided_by
+        row.decided_at = row.created_at.__class__.utcnow()
+        self.s.flush()
+        return row
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import json
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 from src.core.infrastructure.messaging.s3_sqs_ingestion import handle_s3_event
 from src.core.infrastructure.persistence.sqlalchemy.models import StorageObject
@@ -21,7 +21,7 @@ EVENT = {
 def count_storage(engine):
     Session = sessionmaker(bind=engine, future=True)
     with Session() as s:
-        return s.scalar(select(StorageObject).where(StorageObject.key == "idem.pdf").count())
+        return s.scalar(select(func.count()).select_from(StorageObject).where(StorageObject.key == "idem.pdf"))
 
 
 def main():
@@ -30,8 +30,12 @@ def main():
     with Session() as s:
         handle_s3_event(EVENT, s)
         handle_s3_event(EVENT, s)
-        so = s.scalar(select(StorageObject).where(StorageObject.key == "idem.pdf"))
-        print({"storage_object_id": so.id if so else None})
+        c = count_storage(engine)
+        so = s.execute(select(StorageObject).where(StorageObject.key == "idem.pdf")).scalars().first()
+        print({
+            "storage_object_id": so.id if so else None,
+            "count_storage_objects": int(c),
+        })
 
 
 if __name__ == "__main__":
